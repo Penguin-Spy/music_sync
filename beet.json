@@ -1,0 +1,11 @@
+{
+  "name": "music_sync",
+  "data_pack": {
+    "load": ["src"]
+  },
+  "resource_pack": {
+    "load": ["src"]
+  },
+  "output": "out",
+  "pipeline": [ "my_plugins.generate_tracks" ]
+}
