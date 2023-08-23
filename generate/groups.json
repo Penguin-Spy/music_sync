@@ -1,0 +1,6 @@
+{
+  "music.nether.basalt_deltas": "biome ~ ~ ~ minecraft:basalt_deltas",
+  "music.overworld.badlands": "biome ~ ~ ~ #minecraft:is_badlands",
+  "music.creative": "entity @s[gamemode=creative]",
+  "music.end": "dimension minecraft:the_end"
+}
