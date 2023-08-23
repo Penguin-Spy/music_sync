@@ -1,4 +1,5 @@
 # ran as each player who's music_sync.remaining score is 0 every 5 minutes
+say start music
 
 # nether
 #basalt_deltas
