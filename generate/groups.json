@@ -1,6 +1,15 @@
 {
-  "music.nether.basalt_deltas": "biome ~ ~ ~ minecraft:basalt_deltas",
-  "music.overworld.badlands": "biome ~ ~ ~ #minecraft:is_badlands",
-  "music.creative": "entity @s[gamemode=creative]",
-  "music.end": "dimension minecraft:the_end"
+  "exclude_groups": [ "music.credits", "music.dragon", "music.menu" ],
+  "exclude_biomes": [ "minecraft:the_end", "minecraft:end_barrens", "minecraft:end_highlands", "minecraft:end_midlands", "minecraft:small_end_islands"],
+  "conditions": {
+    "music.end": "dimension minecraft:the_end unless entity @e[type=minecraft:ender_dragon]",
+    "music.under_water": "biome ~ ~ ~ #minecraft:plays_underwater_music if block ~ ~1 ~ minecraft:water",
+    "music.creative": "entity @s[gamemode=creative]"
+  },
+  "order": [
+    "music.end",
+    "music.under_water",
+    "music.nether",
+    "music.creative"
+  ]
 }
