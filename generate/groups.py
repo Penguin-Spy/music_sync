@@ -9,6 +9,9 @@ group_conditions = groups_cfg["conditions"]
 
 DEFAULT_GROUP = "music.game"
 
+defined_tracks = JsonFile(source_path="generate/tracks.json").data.keys()
+referenced_tracks = set()
+
 # takes a list of sound event definitions (`name:"path/to/sound"`) and converts it to a list of track_ids
 # handles event references
 # ignores weights currently
@@ -21,13 +24,16 @@ def sounds_to_tracks(event_id, all_events):
       out.extend(sounds_to_tracks(sound["name"], all_events))
     else:
       out.append(sound["name"].split("/")[-1])  # just use the filename of the path as the track_id
+      referenced_tracks.add(sound["name"])
+      if sound["name"] not in defined_tracks:
+        raise ReferenceError("'" + sound["name"] + "' is not defined in the tracklist, but is referenced by '" + event_id + "'")
 
   return out
 
 
 def create_group_trigger(ctx, event_id, condition, tracks):
   if len(tracks) == 0:
-    print(f"[info] skipping {event_id} because it contains 0 tracks")
+    print(f"[info] skipping trigger for '{event_id}' because it contains 0 tracks")
     return
 
   # function music_sync:group/ID
@@ -75,6 +81,11 @@ def beet_default(ctx: Context):
     group_tracks[event_id] = sounds_to_tracks(event_id, vanilla_sounds.data)
     group_trigger_biomes[event_id] = []
 
+  # validate tracklist stuff
+  for track_path in defined_tracks:
+    if track_path not in referenced_tracks:
+      print(f"[warn] '{track_path}' is not referenced by any sound events!")
+
   # parse default worldgen to get a list of which biomes play which music sound events
   biomes = vanilla.mount("data/minecraft/worldgen/biome").data["minecraft"][WorldgenBiome]
   for biome_id, biome in biomes.items():
@@ -99,10 +110,10 @@ def beet_default(ctx: Context):
       elif len(biomes) > 0:
         group_conditions[event_id] = f"biome ~ ~ ~ minecraft:{biomes[0]}"
       else:
-        print(f"[warn] no biomes trigger event {event_id} & no trigger specified. event will not play")
+        print(f"[warn] no biomes trigger event '{event_id}' & no trigger specified. event will not play")
     else:
       if len(biomes) > 0:
-        print(f"[warn] using specified condition for {event_id} ({group_conditions[event_id]}) even though {biomes} trigger it")
+        print(f"[warn] using specified condition for '{event_id}' ('{group_conditions[event_id]}') even though '{biomes}' trigger it")
 
   # parse each group to create the group function & add its condition to music_sync:player_start_music
   start_music_cmds = [

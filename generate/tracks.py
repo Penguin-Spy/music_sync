@@ -15,7 +15,7 @@ def beet_default(ctx: Context):
     track_id = path.split("/")[-1]  # just use the filename of the path as the track_id
     mins, secs = length_str.split(":")
     length = (int(mins) * 60) + int(secs) + 10  # wait at least 10 seconds after each track
-    if length > longest_track["length"] and not track_id == "end" and not track_id == "credits":
+    if length > longest_track["length"] and not track_id == "end":
       longest_track = {
         "id": track_id,
         "length": length,
@@ -43,4 +43,4 @@ def beet_default(ctx: Context):
   ctx.assets["music_sync:en_us"] = Language(lang)
   ctx.assets["music_sync"].sound_config = SoundConfig(sounds)
 
-  print("longest track: " + longest_track["id"] + " (" + longest_track["length_str"] +")")
+  print("[info] longest track: " + longest_track["id"] + " (" + longest_track["length_str"] +")")
