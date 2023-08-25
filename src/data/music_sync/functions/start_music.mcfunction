@@ -1,4 +1,4 @@
-# reset the selected track for each group (also resets the timer (& randomization variables))
+# reset the selected track for each event (also resets the timer (& randomization variables))
 scoreboard players reset * music_sync.track
 
 # play a new track for each player whose current track has completed (or has no score for music_sync.remaining)

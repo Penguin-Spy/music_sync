@@ -13,5 +13,5 @@ resource_pack:
 pipeline: [
   "generate.remove_vanilla_music",
   "generate.tracks",
-  "generate.groups",
+  "generate.events",
 ]

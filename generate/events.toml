@@ -1,0 +1,26 @@
+# credits & menu happen outside of the game world,
+# and the "music.end" event function plays no music if the dragon is alive, allowing minecraft to play the boss fight music as normal (unsynced, but whatever)
+exclude_events = ["music.credits", "music.dragon", "music.menu"]
+
+# handling of the end is done with a custom condition that checks the dimension
+exclude_biomes = [
+  "minecraft:the_end",
+  "minecraft:end_barrens",
+  "minecraft:end_highlands",
+  "minecraft:end_midlands",
+  "minecraft:small_end_islands",
+]
+
+# follows precedence order as listed on the wiki
+order = [
+  "music.end",
+  "music.under_water",
+  "music.nether",
+  "music.creative",
+]
+
+# specific conditions for events that aren't automatically triggered by a biome
+[conditions]
+  "music.end" = "dimension minecraft:the_end"
+  "music.under_water" = "biome ~ ~ ~ #minecraft:plays_underwater_music if block ~ ~1 ~ minecraft:water"
+  "music.creative" = "entity @s[gamemode=creative]"

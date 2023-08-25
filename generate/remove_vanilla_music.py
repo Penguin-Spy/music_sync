@@ -5,8 +5,9 @@
 
 from beet import Context, SoundConfig, JsonFile
 from generate.get_vanilla_sounds_json import get_vanilla_sounds
+import toml
 
-exclude_events = JsonFile(source_path="generate/groups.json").data["exclude_groups"]
+exclude_events = toml.load("generate/events.toml")["exclude_events"]
 
 # Replaces the vanilla music sound events with empty sounds arrays
 # Doesn't touch excluded events
