@@ -15,9 +15,6 @@ event_conditions = events_cfg["conditions"]
 
 DEFAULT_EVENT = "music.game"
 
-defined_tracks = JsonFile(source_path="generate/tracks.json").data.keys()
-referenced_tracks = set()
-
 # takes a list of sound event definitions (`name:"path/to/sound"`) and converts it to a list of track_ids
 # handles event references
 # ignores weights currently
@@ -30,9 +27,6 @@ def sounds_to_tracks(event_id, all_events):
       out.extend(sounds_to_tracks(sound["name"], all_events))
     else:
       out.append(sound["name"].split("/")[-1])  # just use the filename of the path as the track_id
-      referenced_tracks.add(sound["name"])
-      if sound["name"] not in defined_tracks:
-        raise ReferenceError("'" + sound["name"] + "' is not defined in the tracklist, but is referenced by '" + event_id + "'")
 
   return out
 
@@ -92,12 +86,6 @@ def beet_default(ctx: Context):
 
     event_tracks[event_id] = sounds_to_tracks(event_id, vanilla_sounds.data)
     event_trigger_biomes[event_id] = []
-
-  # validate tracklist stuff
-  for track_path in defined_tracks:
-    if track_path not in referenced_tracks:
-      print(f"[warn] '{track_path}' is not referenced by any sound events!")
-
 
   # parse default worldgen to get a list of which biomes play which music sound events
   biomes = vanilla.mount("data/minecraft/worldgen/biome").data["minecraft"][WorldgenBiome]
