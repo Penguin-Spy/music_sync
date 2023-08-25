@@ -43,21 +43,23 @@ def create_group_trigger(ctx, event_id, condition, tracks):
 
   # function music_sync:group/ID
   cmds = [
-    "tag @s add music_sync.played_track",
-    f"scoreboard players set $max music_sync.track {len(tracks)}",
-    f"execute unless score {event_id} music_sync.track matches -1.. summon minecraft:marker run function music_sync:get_random",
-    f"execute unless score {event_id} music_sync.track matches -1.. run scoreboard players operation {event_id} music_sync.track = $random music_sync.track"
+    "tag @s add music_sync.played_track"
   ]
-  for i, track_id in enumerate(tracks):
-    cmds.append(f"execute if score {event_id} music_sync.track matches {i} run function music_sync:track/{track_id}")
+  if len(tracks) > 1: # only generate a randomizer if there's more than one track
+    cmds.extend([
+      f"scoreboard players set $max music_sync.track {len(tracks)}",
+      f"execute unless score {event_id} music_sync.track matches -1.. summon minecraft:marker run function music_sync:get_random",
+      f"execute unless score {event_id} music_sync.track matches -1.. run scoreboard players operation {event_id} music_sync.track = $random music_sync.track"
+    ])
+    for i, track_id in enumerate(tracks):
+      cmds.append(f"execute if score {event_id} music_sync.track matches {i} run function music_sync:track/{track_id}")
+  else:
+    cmds.append(f"function music_sync:track/{tracks[0]}")
 
   ctx.data.functions[f"music_sync:group/{event_id}"] = Function(cmds)
 
   # function music_sync:player_start_music
-  if condition:
-    return f"execute unless entity @s[tag=music_sync.played_track] if {condition} run function music_sync:group/{event_id}"
-  else:
-    return f"# no condition for function music_sync:group/{event_id}"
+  return f"execute unless entity @s[tag=music_sync.played_track] if {condition} run function music_sync:group/{event_id}"
 
 order = groups_cfg["order"]
 sort_after = len(order)
