@@ -1,5 +1,3 @@
-say start_music
-
 # reset the selected track for each group (also resets the timer (& randomization variables))
 scoreboard players reset * music_sync.track
 

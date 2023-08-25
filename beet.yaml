@@ -1,7 +1,5 @@
 id: "music_sync"
 description: "Sync music between all players\n\u00A7eBy: \u00A7dPenguin_Spy"
-#author: "Penguin_Spy"
-#version: "1.0"
 # minecraft: "latest"
 
 output: "out"

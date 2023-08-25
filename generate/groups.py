@@ -1,3 +1,8 @@
+# Copyright © Penguin_Spy 2023
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 from beet import Context, Function, JsonFile
 from beet.contrib.vanilla import Vanilla
 from beet.contrib.worldgen import WorldgenBiome, WorldgenBiomeTag
@@ -117,7 +122,6 @@ def beet_default(ctx: Context):
 
   # parse each group to create the group function & add its condition to music_sync:player_start_music
   start_music_cmds = [
-    "say player_start_music",
     "tag @s remove music_sync.played_track"
   ]
 
