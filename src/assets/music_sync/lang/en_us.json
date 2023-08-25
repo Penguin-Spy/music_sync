@@ -1,0 +1,5 @@
+{
+  "music_sync.toggle_now_playing": "toggle 'Now playing' display for music sync",
+  "music_sync.toggle_now_playing.enabled": "'Now playing' display enabled",
+  "music_sync.toggle_now_playing.disabled": "'Now playing' display disabled"
+}

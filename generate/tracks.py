@@ -11,7 +11,6 @@ tracks_cfg = JsonFile(source_path="generate/tracks.json").data
 
 # Convert the tracks list to sound events, a lang file, and functions to /playsound and /title them
 def beet_default(ctx: Context):
-  lang = {}
   sounds = {}
   longest_track = {
     "length": -1
@@ -27,9 +26,6 @@ def beet_default(ctx: Context):
         "length_str": length_str
       }
 
-    # {"translate": "music_sync.track.ID"}
-    lang[f"music_sync.track.{track_id}"] = title
-
     # playsound music_sync:track.ID
     sounds[f"track.{track_id}"] = {
       "sounds": [{
@@ -41,11 +37,10 @@ def beet_default(ctx: Context):
     # function music_sync:track/ID
     ctx.data.functions[f"music_sync:track/{track_id}"] = Function([
       f'playsound music_sync:track.{track_id} music @s',
-      'title @s actionbar {"translate":"record.nowPlaying","with":[{"translate":"music_sync.track.' + track_id + '"}],"color":"light_purple"}',
+      'title @s[tag=music_sync.show_now_playing] actionbar {"translate":"record.nowPlaying","with":[{"text":"' + title + '"}],"color":"light_purple"}',
       f'scoreboard players set @s music_sync.remaining {length}'
     ])
 
-  ctx.assets["music_sync:en_us"] = Language(lang)
   ctx.assets["music_sync"].sound_config = SoundConfig(sounds)
 
   print("[info] longest track: " + longest_track["id"] + " (" + longest_track["length_str"] +")")
