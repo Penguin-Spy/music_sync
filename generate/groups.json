@@ -2,7 +2,7 @@
   "exclude_groups": [ "music.credits", "music.dragon", "music.menu" ],
   "exclude_biomes": [ "minecraft:the_end", "minecraft:end_barrens", "minecraft:end_highlands", "minecraft:end_midlands", "minecraft:small_end_islands"],
   "conditions": {
-    "music.end": "dimension minecraft:the_end unless entity @e[type=minecraft:ender_dragon]",
+    "music.end": "dimension minecraft:the_end",
     "music.under_water": "biome ~ ~ ~ #minecraft:plays_underwater_music if block ~ ~1 ~ minecraft:water",
     "music.creative": "entity @s[gamemode=creative]"
   },
