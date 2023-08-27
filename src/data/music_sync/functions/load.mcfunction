@@ -10,7 +10,7 @@ scoreboard objectives add music_sync.track dummy
 # detects when a player leaves (to reset their remaining time bc music stops)
 scoreboard objectives add music_sync.leave_game minecraft.custom:minecraft.leave_game
 
-scoreboard objectives add toggle_now_playing trigger {"translate":"music_sync.toggle_now_playing"}
+scoreboard objectives add toggle_now_playing trigger {"translate":"music_sync.toggle_now_playing", "fallback": "toggle 'Now playing' display for music sync"}
 scoreboard players enable * toggle_now_playing
 
 # Display install notice & license thingy on new install/version change
