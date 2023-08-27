@@ -1,0 +1,34 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python 3.10
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install beet
+        runs: pip install beet
+
+      - name: Build the beet project
+        runs: beet -s "data_pack.zipped=true" -s "resource_pack.zipped=true" build
+
+      - name: Publish via GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/*"
+          makeLatest: true
+          allowUpdates: true

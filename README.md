@@ -1,9 +1,20 @@
 # Music Sync
-Syncs what specific background music is playing between all players!  
-The music volume slider still controls the music volume.  
-All players must have the resourcepack loaded to hear the synced music.  
-This datapack/resourcepack is intended to be used with vanilla Minecraft 1.20. Compatability with other datapacks, mods, or resourcepacks is not garunteed; in particular you will almost definetly not hear any new music tracks added by other things, and no music will play in custom biomes/dimensions.
+Sync what specific background music is playing between all players!  
 
+### Features
+- All players in the same area (type of biome) will hear the same background music at the same time.
+- Otherwise identical functionality to vanilla Minecraft; all tracks play in the same places with the same frequency and the same volume.
+- The music volume slider still controls the in-game music volume.
+
+### Usage
+- Download the datapack & resourcepack from Modrinth (pending), or the [latest GitHub release](https://github.com/Penguin-Spy/replugged-pronoundb/releases/latest).
+- Add the datapack to your world, and enable the resourcepack (or set it as the server resource pack).
+
+All players must have the resourcepack loaded to hear the synced music. Players without the resourcepack will still hear vanilla music.  
+This datapack/resourcepack is intended to be used with vanilla Minecraft 1.20.1. Compatability with other datapacks, mods, or resourcepacks is not garunteed; in particular you will almost definetly not hear any new music tracks added by other things, and no music will play in custom biomes/dimensions.
+
+### Technical details
+This datapack uses [beet](https://github.com/mcbeet/beet "The Minecraft pack development kit.") to automatically generate sounds.json entries & functions for every track & sound event used by each biome in the vanilla game.
 
 # License
 Copyright © Penguin_Spy 2023  

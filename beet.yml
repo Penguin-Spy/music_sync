@@ -1,14 +1,12 @@
 id: "music_sync"
 description: "Sync music between all players\n\u00A7eBy: \u00A7dPenguin_Spy"
-# minecraft: "latest"
+minecraft: "1.20"
 
-output: "out"
+output: "build"
 data_pack:
   load: ["src"]
-  #zipped: true
 resource_pack:
   load: ["src"]
-  #zipped: true
 
 pipeline: [
   "generate.remove_vanilla_music",

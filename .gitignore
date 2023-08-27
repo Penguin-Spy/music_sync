@@ -1,5 +1,4 @@
 notes.md
-1.20.1 sounds.json
-out/
+build/
 .beet_cache/
 __pycache__/
