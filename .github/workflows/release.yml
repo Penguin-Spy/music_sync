@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
+      - "v*-mc*"
 
 jobs:
   release:
@@ -21,10 +21,10 @@ jobs:
           cache: "pip"
 
       - name: Install beet
-        runs: pip install beet
+        run: pip install beet
 
       - name: Build the beet project
-        runs: beet -s "data_pack.zipped=true" -s "resource_pack.zipped=true" build
+        run: beet -s "data_pack.zipped=true" -s "resource_pack.zipped=true" build
 
       - name: Publish via GitHub release
         uses: ncipollo/release-action@v1
