@@ -7,7 +7,7 @@ Sync what specific background music is playing between all players!
 - The music volume slider still controls the in-game music volume.
 
 ### Usage
-- Download the datapack & resourcepack from Modrinth (pending), or the [latest GitHub release](https://github.com/Penguin-Spy/replugged-pronoundb/releases/latest).
+- Download the datapack & resourcepack from [Modrinth](https://modrinth.com/mod/music_sync/version/latest), or the [latest GitHub release](https://github.com/Penguin-Spy/music_sync/releases/latest).
 - Add the datapack to your world, and enable the resourcepack (or set it as the server resource pack).
 
 All players must have the resourcepack loaded to hear the synced music. Players without the resourcepack will still hear vanilla music.  
