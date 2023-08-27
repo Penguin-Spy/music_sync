@@ -16,22 +16,29 @@ event_conditions = events_cfg["conditions"]
 DEFAULT_EVENT = "music.game"
 
 # takes a list of sound event definitions (`name:"path/to/sound"`) and converts it to a list of track_ids
-# handles event references
-# ignores weights currently
+# handles event references and weights (but not both in the same event)
 def sounds_to_tracks(event_id, all_events):
   sounds = all_events[event_id]["sounds"]
 
-  out = []
+  total_weight = 0
+  tracks = []
   for sound in sounds:
-    if "type" in sound.keys() and sound["type"] == "event":  # recursively parse event references
-      out.extend(sounds_to_tracks(sound["name"], all_events))
-    else:
-      out.append(sound["name"].split("/")[-1])  # just use the filename of the path as the track_id
+    weight = sound["weight"] if "weight" in sound.keys() else 1
+    total_weight += weight
 
-  return out
+    track = {
+      "name": sound["name"].split("/")[-1],  # just use the filename of the path as the track_id
+      "type": "event" if "type" in sound.keys() and sound["type"] == "event" else "track",
+      "weight": sound["weight"] if "weight" in sound.keys() else 1
+    }
+    tracks.append(track)
 
+  return tracks, total_weight
 
-def create_event_trigger(ctx, event_id, condition, tracks):
+# creates the event function and returns the condition for it to play
+def create_event(ctx, event_id, condition, all_events):
+  tracks, total_weight = sounds_to_tracks(event_id, all_events)
+
   if len(tracks) == 0:
     print(f"[info] skipping trigger for '{event_id}' because it contains 0 tracks")
     return
@@ -46,19 +53,24 @@ def create_event_trigger(ctx, event_id, condition, tracks):
     ]
     if len(tracks) > 1: # only generate a randomizer if there's more than one track
       cmds.extend([
-        f"scoreboard players set $max music_sync.track {len(tracks)}",
+        f"scoreboard players set $max music_sync.track {total_weight}",
         f"execute unless score {event_id} music_sync.track matches -1.. summon minecraft:marker run function music_sync:get_random",
         f"execute unless score {event_id} music_sync.track matches -1.. run scoreboard players operation {event_id} music_sync.track = $random music_sync.track"
       ])
-      for i, track_id in enumerate(tracks):
-        cmds.append(f"execute if score {event_id} music_sync.track matches {i} run function music_sync:track/{track_id}")
+      weight_used = 0 # keep track of how much of the total weight has been used
+      for track in tracks:
+        weight = track['weight']
+        weight_str = f"{weight_used}" if weight == 1 else f"{weight_used}..{weight_used + weight - 1}"
+        weight_used += weight
+        cmds.append(f"execute if score {event_id} music_sync.track matches {weight_str} run function music_sync:{track['type']}/{track['name']}")
     else:
-      cmds.append(f"function music_sync:track/{tracks[0]}")
+      cmds.append(f"function music_sync:{tracks[0]['type']}/{tracks[0]['name']}")
 
     ctx.data.functions[f"music_sync:event/{event_id}"] = Function(cmds)
 
   # add line to music_sync:player_start_music
   return f"execute unless entity @s[tag=music_sync.played_track] if {condition} run function music_sync:event/{event_id}"
+
 
 order = events_cfg["order"]
 sort_after = len(order)
@@ -75,19 +87,12 @@ def sort_by_cfg(item):
 def beet_default(ctx: Context):
   vanilla = ctx.inject(Vanilla)
   ctx.require(get_vanilla_sounds)
-  vanilla_sounds = ctx.meta["vanilla_sounds_json"]
-
-  event_tracks = {}
-  event_trigger_biomes = {}
-  # parse sounds.json to create a mapping of event_id -> array of tracks that play
-  for event_id in vanilla_sounds.data.keys():
-    if not event_id.startswith("music."): continue
-    if event_id in events_cfg["exclude_events"]: continue
-
-    event_tracks[event_id] = sounds_to_tracks(event_id, vanilla_sounds.data)
-    event_trigger_biomes[event_id] = []
+  vanilla_sounds = ctx.meta["vanilla_sounds_json"].data
 
   # parse default worldgen to get a list of which biomes play which music sound events
+  event_trigger_biomes = {
+    DEFAULT_EVENT: []
+  }
   biomes = vanilla.mount("data/minecraft/worldgen/biome").data["minecraft"][WorldgenBiome]
   for biome_id, biome in biomes.items():
     if f"minecraft:{biome_id}" in events_cfg["exclude_biomes"]: continue
@@ -96,6 +101,8 @@ def beet_default(ctx: Context):
       event_id = biome_effects["music"]["sound"]
       if event_id.startswith("minecraft:"):
         event_id = event_id[10:]
+      if event_id not in event_trigger_biomes.keys():
+        event_trigger_biomes[event_id] = []
       event_trigger_biomes[event_id].append(biome_id)
     else:
       event_trigger_biomes[DEFAULT_EVENT].append(biome_id)
@@ -103,12 +110,12 @@ def beet_default(ctx: Context):
   # generate a tag & condition for each music event
   for event_id, biomes in event_trigger_biomes.items():
     if not event_id in event_conditions.keys():
-      if len(biomes) > 1:
+      if len(biomes) > 1: # generate tag & condition that uses the tag
         ctx.data[f"music_sync:{event_id}"] = WorldgenBiomeTag({
           "values": [f"minecraft:{biome}" for biome in biomes]
         })
         event_conditions[event_id] = f"biome ~ ~ ~ #music_sync:{event_id}"
-      elif len(biomes) > 0:
+      elif len(biomes) > 0: # just directly check the biome
         event_conditions[event_id] = f"biome ~ ~ ~ minecraft:{biomes[0]}"
       else:
         print(f"[warn] no biomes trigger event '{event_id}' & no trigger specified. event will not play")
@@ -122,7 +129,7 @@ def beet_default(ctx: Context):
     "tag @s remove music_sync.played_track"
   ]
   for event_id in sorted(event_conditions, key=sort_by_cfg):
-    cmd = create_event_trigger(ctx, event_id, event_conditions[event_id], event_tracks[event_id])
+    cmd = create_event(ctx, event_id, event_conditions[event_id], vanilla_sounds)
     if cmd:
       start_music_cmds.append(cmd)
 
