@@ -12,4 +12,12 @@ pipeline: [
   "generate.remove_vanilla_music",
   "generate.tracks",
   "generate.events",
+  "beet.contrib.copy_files"
 ]
+
+meta:
+  copy_files:
+    resource_pack:
+      pack.png: "pack.png"
+    data_pack:
+      pack.png: "pack.png"
